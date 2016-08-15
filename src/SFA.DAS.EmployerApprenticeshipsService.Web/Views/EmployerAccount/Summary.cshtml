@@ -1,47 +1,64 @@
-﻿@model SFA.DAS.EmployerApprenticeshipsService.Web.Models.SummaryViewModel
+﻿@using SFA.DAS.EmployerApprenticeshipsService.Web
+@using SFA.DAS.EmployerApprenticeshipsService.Web.Models
+@model OrchestratorResponse<SummaryViewModel>
 
-<div class="grid-row">
-    <div class="column-half">
-        <h1 class="heading-xlarge">Summary</h1>
-    </div>
-</div>
 <div class="grid-row">
     <div class="column-two-thirds">
+        <table class="check-your-answers">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        <h2 class="heading-medium">
+                            Set up your account
+                        </h2>
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
 
-        @if (string.IsNullOrEmpty(Model.EmployerRef))
-        {
-            <h2 class="heading-small">The PAYE scheme is already associated with an account. Please use a different gateway login</h2>
-            <a class="button" href="@Url.Action("Gateway","EmployerAccount")">Search Again</a>
-        }
-        else
-        {
-            <h2 class="heading-small">
-                Your company number <b>@Model.CompanyNumber</b> is associated with:
-            </h2>
-            <h2 class="bold-xlarge">@Model.CompanyName</h2>
-            <h2 class="heading-small">
-                With PAYE scheme ref:
-            </h2>
-
-            <h2 class="bold-medium">@Model.EmployerRef</h2>
-            <h3 style="margin-top: 100px;" class="heading-small">Create an Account based on these details?</h3>
-            <form method="POST" action="@Url.Action("CreateAccount")">
-                <fieldset class="inline">
-                    <label class="block-label" for="radio1">
-                        <input id="radio1" type="radio" name="confirm_create" checked="checked" value="1">
-                        Yes
-                    </label>
-                    <label class="block-label" for="radio2">
-                        <input id="radio2" type="radio" name="confirm_create" value="0">
-                        No
-                    </label>
-                </fieldset>
-                <p></p>
-                <button type="submit" class="button">Continue</button>
-                <p></p>
-            </form>
-        }
-
-        
+            <tbody>
+                <tr>
+                    <td>Company number</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Model.Data.CompanyNumber)) {
+                            @Model.Data.CompanyNumber
+                            <br/>
+                            @Model.Data.CompanyName 
+                        } else {
+                            <span>(not set)</span>
+                        }
+                    </td>
+                    <td class="change-answer">
+                        <a href="@Url.Action("SelectEmployer", "EmployerAccount")">
+                            @(string.IsNullOrEmpty(Model.Data.CompanyNumber) ? "Set" : "Change")
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        PAYE Scheme ref
+                    </td>
+                    <td>
+                        @(!string.IsNullOrEmpty(Model.Data.EmployerRef) ? Model.Data.EmployerRef : "(not set)")
+                    </td>
+                    <td class="change-answer">
+                        <a href="@Url.Action("Gateway", "EmployerAccount")">
+                            @(string.IsNullOrEmpty(Model.Data.EmployerRef) ? "Set" : "Change")
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 style="margin-top: 100px;" class="heading-small">Create an Account based on these details?</h3>
+        <form method="POST" action="@Url.Action("CreateAccount")">
+            <button type="submit" class="button" @(Model.Data.IsReady ? "" : "disabled=\"disabled\"")>Create account</button>
+            @if(!Model.Data.IsReady)
+            {
+                <p>
+                    To continue, fill out the details above.
+                </p>
+            }
+        </form>
     </div>
 </div>

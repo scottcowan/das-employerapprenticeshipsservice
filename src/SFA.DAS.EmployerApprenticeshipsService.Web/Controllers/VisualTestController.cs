@@ -205,14 +205,16 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
 
             _viewToModel = new Dictionary<string, object>
             {
-                {"~/Views/EmployerAccount/Summary.cshtml", new SummaryViewModel()
+                {"~/Views/EmployerAccount/Summary.cshtml", new OrchestratorResponse<SummaryViewModel> {
+                    Data = new SummaryViewModel
                     {
                         CompanyName = "sushiCorp Ltd.",
                         CompanyNumber = "1234567890",
                         DateOfIncorporation = new DateTime(2016, 05, 16),
                         EmployerRef = "emp-123",
                         RegisteredAddress = "123 Fake St."
-                    }},
+                    }
+                } },
                 {"~/Views/EmployerAccount/VerifyEmployer.cshtml", new SelectEmployerViewModel()
                     {
                         CompanyName = "sushiCorp Ltd.",
@@ -337,6 +339,18 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
                                     SubMessage = "Congratulation!!1",
                                     Severity = FlashMessageSeverityLevel.Success
                                 }
+            });
+        }
+
+        public ActionResult EmployerAccount_Gateway()
+        {
+            return View("~/Views/EmployerAccount/Gateway.cshtml", "EmployerAccount", new OrchestratorResponse
+            {
+                FlashMessage = new FlashMessageViewModel()
+                {
+                    Message = "The PAYE scheme is already associated with an account. Please use a different gateway login",
+                    //TODO: redirect to search
+                }
             });
         }
     }

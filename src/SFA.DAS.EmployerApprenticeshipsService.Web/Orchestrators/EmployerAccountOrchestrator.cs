@@ -40,19 +40,17 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Orchestrators
         public EmployerAccountData GetCookieData(HttpContextBase context)
         {
             var cookie = (string)CookieService.Get(context, CookieName);
-
+            if (string.IsNullOrEmpty(cookie))
+            {
+                return new EmployerAccountData();
+            }
             return JsonConvert.DeserializeObject<EmployerAccountData>(cookie);
         }
 
-        public void CreateCookieData(HttpContextBase context, object data)
+        public void SetCookieData(HttpContextBase context, object data)
         {
             var json = JsonConvert.SerializeObject(data);
-            CookieService.Create(context, CookieName, json, 365);
-        }
-
-        public void UpdateCookieData(HttpContextBase context, object data)
-        {
-            CookieService.Update(context, CookieName, JsonConvert.SerializeObject(data));
+            CookieService.Set(context, CookieName, json, 365);
         }
         
     }

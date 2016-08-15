@@ -5,7 +5,7 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web
 {
     public interface ICookieService
     {
-        void Create(HttpContextBase context, string name, string content, int expireDays);
+        void Set(HttpContextBase context, string name, string content, int expireDays);
         void Update(HttpContextBase context, string name, string content);
         void Delete(HttpContextBase context, string name);
         object Get(HttpContextBase context, string name);
@@ -13,11 +13,19 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web
 
     public class HttpCookieService : ICookieService
     {
-        public void Create(HttpContextBase context, string name, string content, int expireDays)
+        public void Set(HttpContextBase context, string name, string content, int expireDays)
         {
-            var userCookie = new HttpCookie(name, content);
-            userCookie.Expires.AddDays(expireDays);
-            context.Response.Cookies.Add(userCookie);
+            var cookie = context.Request.Cookies[name];
+            if (cookie == null)
+            {
+                var userCookie = new HttpCookie(name, content);
+                userCookie.Expires.AddDays(expireDays);
+                context.Response.Cookies.Add(userCookie);
+            }
+            else
+            {
+                Update(context, name, content);
+            }
         }
 
         public void Update(HttpContextBase context, string name, string content)
@@ -47,7 +55,11 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web
 
         public object Get(HttpContextBase context, string name)
         {
-            return context.Request.Cookies[name].Value;
+            var cookies = context.Request.Cookies[name];
+            if (cookies == null) {
+                return null;
+            }
+            return cookies.Value;
         }
     }
 

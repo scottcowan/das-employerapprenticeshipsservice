@@ -51,6 +51,20 @@ table {
     }
 }
 
+.check-your-answers .change-answer {
+    text-align: right;
+    font-weight: bold;
+    padding-right: 0;
+} 
+
+@media (min-width: 641px) {
+    .check-your-answers td {
+        font-size: 19px;
+        line-height: 1.3157894737;
+    }
+}
+
+
 /* RESPONSIVE TABLES */
 .responsive-table {
     display:table;

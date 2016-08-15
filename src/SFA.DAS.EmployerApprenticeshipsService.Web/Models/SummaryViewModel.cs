@@ -9,5 +9,7 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Models
         public DateTime DateOfIncorporation { get; set; }
         public string RegisteredAddress { get; set; }
         public string EmployerRef { get; set; }
+
+        public bool IsReady { get { return !string.IsNullOrEmpty(CompanyNumber) && !string.IsNullOrEmpty(EmployerRef); } }
     }
 }

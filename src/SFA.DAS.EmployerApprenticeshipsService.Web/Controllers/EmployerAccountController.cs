@@ -62,15 +62,14 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
         [HttpGet]
         public ActionResult VerifyEmployer(SelectEmployerViewModel model)
         {
-            var data = new EmployerAccountData
-            {
-                CompanyNumber = model.CompanyNumber,
-                CompanyName = model.CompanyName,
-                DateOfIncorporation = model.DateOfIncorporation,
-                RegisteredAddress = model.RegisteredAddress
-            };
+            var data = _employerAccountOrchestrator.GetCookieData(HttpContext);
 
-            _employerAccountOrchestrator.CreateCookieData(HttpContext,data);
+            data.CompanyNumber = model.CompanyNumber;
+            data.CompanyName = model.CompanyName;
+            data.DateOfIncorporation = model.DateOfIncorporation;
+            data.RegisteredAddress = model.RegisteredAddress;
+            
+            _employerAccountOrchestrator.SetCookieData(HttpContext,data);
             
             return View(model);
         }
@@ -97,39 +96,48 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
             enteredData.EmployerRef = empref.Empref;
             enteredData.AccessToken = response.Data.AccessToken;
             enteredData.RefreshToken = response.Data.RefreshToken;
-            _employerAccountOrchestrator.UpdateCookieData(HttpContext, enteredData);
+            _employerAccountOrchestrator.SetCookieData(HttpContext, enteredData);
 
-            
-         
+            if (string.IsNullOrEmpty(empref.Empref))
+            {
+                return View("Summary", new OrchestratorResponse<SummaryViewModel> {
+                    Data = ToSummaryViewModel(enteredData),
+                    FlashMessage = new FlashMessageViewModel()
+                    {
+                        Message = "The PAYE scheme is already associated with an account. Please use a different gateway login",
+                    }
+                });
+            }
             return RedirectToAction("Summary");
         }
-        
 
         [HttpGet]
         public ActionResult Summary()
         {
             var enteredData = _employerAccountOrchestrator.GetCookieData(HttpContext);
+            
+            var model = new OrchestratorResponse<SummaryViewModel>
+            {
+                Data = ToSummaryViewModel(enteredData)
+            };
 
-            var model = new SummaryViewModel
+            return View(model);
+        }
+        private SummaryViewModel ToSummaryViewModel(EmployerAccountData enteredData)
+        {
+            return new SummaryViewModel
             {
                 CompanyName = enteredData.CompanyName,
                 CompanyNumber = enteredData.CompanyNumber,
                 DateOfIncorporation = enteredData.DateOfIncorporation,
-                EmployerRef = enteredData.EmployerRef
+                EmployerRef = enteredData.EmployerRef,
+                RegisteredAddress = enteredData.RegisteredAddress
             };
-
-            return View(model);
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateAccount()
         {
-
-            if (Request.Params[@"confirm_create"] != @"1")
-            {
-                TempData["ErrorMessage"] = "You can start the create account proccess again";
-                return RedirectToAction("Index");
-            }
             var enteredData = _employerAccountOrchestrator.GetCookieData(HttpContext);
 
             await _employerAccountOrchestrator.CreateAccount(new CreateAccountModel
@@ -155,7 +163,5 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
             var userIdClaim = _owinWrapper.GetClaimValue(@"sub");
             return userIdClaim ?? "";
         }
-        
-        
     }
 }
