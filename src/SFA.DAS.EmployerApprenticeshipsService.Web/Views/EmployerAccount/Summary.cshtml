@@ -9,8 +9,9 @@
                 <tr>
                     <th colspan="2">
                         <h2 class="heading-medium">
-                            Set up your account
+                            Create an Employer account
                         </h2>
+                        <p>To create a new employer account you need the following information, once you have this information please select the section to complete.<br/><br/>Once you have completed the steps you can continue and create the account.</p>
                     </th>
                     <th>
                     </th>
@@ -26,12 +27,12 @@
                             <br/>
                             @Model.Data.CompanyName 
                         } else {
-                            <span>(not set)</span>
+                            <span>Not started</span>
                         }
                     </td>
                     <td class="change-answer">
                         <a href="@Url.Action("SelectEmployer", "EmployerAccount")">
-                            @(string.IsNullOrEmpty(Model.Data.CompanyNumber) ? "Set" : "Change")
+                            @(string.IsNullOrEmpty(Model.Data.CompanyNumber) ? "Start" : "Change")
                         </a>
                     </td>
                 </tr>
@@ -40,11 +41,11 @@
                         PAYE Scheme ref
                     </td>
                     <td>
-                        @(!string.IsNullOrEmpty(Model.Data.EmployerRef) ? Model.Data.EmployerRef : "(not set)")
+                        @(!string.IsNullOrEmpty(Model.Data.EmployerRef) ? Model.Data.EmployerRef : "Not Started")
                     </td>
                     <td class="change-answer">
                         <a href="@Url.Action("Gateway", "EmployerAccount")">
-                            @(string.IsNullOrEmpty(Model.Data.EmployerRef) ? "Set" : "Change")
+                            @(string.IsNullOrEmpty(Model.Data.EmployerRef) ? "Start" : "Change")
                         </a>
                     </td>
                 </tr>
@@ -52,7 +53,7 @@
         </table>
         <h3 style="margin-top: 100px;" class="heading-small">Create an Account based on these details?</h3>
         <form method="POST" action="@Url.Action("CreateAccount")">
-            <button type="submit" class="button" @(Model.Data.IsReady ? "" : "disabled=\"disabled\"")>Create account</button>
+            <button type="submit" class="button" @(Model.Data.IsReady ? "" : "disabled=\"disabled\"")>Create account</button>&nbsp;&nbsp;&nbsp;<a class="link" href="/">Cancel</a>
             @if(!Model.Data.IsReady)
             {
                 <p>
