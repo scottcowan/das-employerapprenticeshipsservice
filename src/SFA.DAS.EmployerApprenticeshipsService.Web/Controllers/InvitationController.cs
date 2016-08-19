@@ -71,8 +71,8 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
 
             await _invitationOrchestrator.AcceptInvitation(invitationItem.Id, _userIdClaim);
 
-            TempData["successHeader"] = "Invitation Created";
-            TempData["successCompany"] = invitationItem.AccountName;
+            TempData["successHeader"] = "Invitation accepted";
+            TempData["successCompany"] = $"You can now access the {invitationItem.AccountName} levy account";
 
             return RedirectToAction("Index", "Home");
         }

@@ -33,11 +33,11 @@
             <h2 class="heading-medium">Invitations</h2>
             @if (Model.Data.Invitations == 1)
             {
-                <p>You have @Model.Data.Invitations invitation to a levy account.</p>
+                <p>You have <strong class="bold-small">@Model.Data.Invitations</strong> invitation to a levy account.</p>
             }
             else
             {
-                <p>You have @Model.Data.Invitations invitations to levy accounts.</p>
+                <p>You have <strong class="bold-small">@Model.Data.Invitations</strong> invitations to levy accounts.</p>
             }
             
             <a href="@Url.Action("All", "Invitation")" class="link">View Invitations</a>
