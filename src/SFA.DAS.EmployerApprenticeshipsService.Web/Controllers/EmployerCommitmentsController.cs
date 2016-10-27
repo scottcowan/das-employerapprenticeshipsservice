@@ -9,6 +9,13 @@ using SFA.DAS.EmployerApprenticeshipsService.Web.Orchestrators;
 
 namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
 {
+    // TODO: LWA - Need to move this out of this file.
+    public enum CreateCohortOptions : byte
+    {
+        SendToProvider = 0,
+        AddApprentices = 1
+    }
+
     [Authorize]
     [RoutePrefix("accounts/{hashedaccountId}/Commitments")]
     public class EmployerCommitmentsController : BaseController
@@ -25,6 +32,8 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
                 throw new ArgumentNullException(nameof(owinWrapper));
             _employerCommitmentsOrchestrator = employerCommitmentsOrchestrator;
         }
+
+
 
         [HttpGet]
         [Route("Home")]
@@ -120,6 +129,19 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
         }
 
         [HttpPost]
+        [Route("Create/ChoosePath")]
+        public async Task<ActionResult> ChoosePath(string hashedAccountId, string legalEntityCode, string providerId, CreateCohortOptions pathOption)
+        {
+            // TODO: Plug-in the enum model binder that Mark G used in Tasks or Events Api
+            // TODO: LWA Save commitment
+            string hashedCommitmentId = "ssss";
+            string nextAction = pathOption == CreateCohortOptions.AddApprentices ? "Details" : "SubmitCommitmentEntry";
+
+            return RedirectToAction(nextAction, new { hashedAccountId = hashedAccountId, hashedCommitmentId = hashedCommitmentId });
+        }
+
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Create")]
         public async Task<ActionResult> CreateCommitment(CreateCommitmentViewModel viewModel)
@@ -178,7 +200,7 @@ namespace SFA.DAS.EmployerApprenticeshipsService.Web.Controllers
 
         [HttpGet]
         [Route("{hashedCommitmentId}/Submit")]
-        public ActionResult SubmitCommitmentEntry(string hashedAccountId)
+        public ActionResult SubmitCommitmentEntry(string hashedAccountId, string hashedCommitmentId)
         {
             // TODO: LWA Implement 
             //var commitment = await _employerCommitmentsOrchestrator.Get(hashedAccountId, hashedCommitmentId);
